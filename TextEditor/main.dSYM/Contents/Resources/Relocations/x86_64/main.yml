@@ -2,6 +2,8 @@
 triple:          'x86_64-apple-darwin'
 binary-path:     '/Users/sofiia/Downloads/plpp_assignment_1/TextEditor/main'
 relocations:
-  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100000BC0, symSize: 0x26C }
-  - { offset: 0x41, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100000BC0, symSize: 0x26C }
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x0, symBinAddr: 0x1000009E0, symSize: 0xE0 }
+  - { offset: 0x8B, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x0, symBinAddr: 0x1000009E0, symSize: 0xE0 }
+  - { offset: 0xB3, size: 0x8, addend: 0x0, symName: _FreeAllList, symObjAddr: 0xE0, symBinAddr: 0x100000AC0, symSize: 0x60 }
+  - { offset: 0x101, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x140, symBinAddr: 0x100000B20, symSize: 0x284 }
 ...
