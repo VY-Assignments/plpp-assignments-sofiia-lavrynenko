@@ -2,17 +2,54 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct Node
+typedef struct Node
 {
     char* letters;
     int currLength;
     int capacity;
     struct Node* next;
-};
+} Node;
 
-struct Node* CreateNewLine()
+typedef struct LList
 {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    Node* head;
+    Node* tail;
+} LList;
+
+LList* CreateList()
+{
+    LList* list = (LList*)malloc(sizeof(LList));
+
+    list -> head = NULL;
+
+    list -> tail = list -> head;
+
+    return list;
+}
+
+void DestroyList(LList* list)
+{
+    Node* curr = list -> head;
+
+    Node* afterCurr = NULL;
+
+    while (curr != NULL)
+    {
+        afterCurr = curr -> next;
+
+        free(curr -> letters);
+
+        free(curr);
+
+        curr = afterCurr;
+    }
+
+    free(list);
+}
+
+Node* CreateNewLine(LList* list)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
 
     if (!newNode)
     {
@@ -28,7 +65,7 @@ struct Node* CreateNewLine()
 
     if(!newNode -> letters)
     {
-        printf("There is a problem. Cannot allocate memory for this char array. \n");
+        printf("There is a problem. Cannot allocate memory for this line. \n");
         printf("\n");
 
         exit(1);
@@ -39,31 +76,40 @@ struct Node* CreateNewLine()
     newNode -> currLength = 0;
     newNode -> next = NULL;
 
+    if (list -> head == NULL)
+    {
+        list -> head = newNode;
+        list -> tail = list -> head;
+
+        return newNode;
+    }
+
+    list -> tail -> next = newNode;
+
+    list -> tail = newNode;
+
     return newNode;
 }
 
-void FreeAllList(struct Node* head)
+void IncreaseLineSize(Node* line)
 {
-    struct Node* current = head;
-
-    while (current != NULL)
-    {
-        struct Node* next = current -> next;
-        free(current -> letters);
-        free(current);
-        current = next;
-    }
+    line -> capacity = line -> capacity * 2;
+    line -> letters = realloc(line -> letters, line -> capacity);
 }
 
 int main()
 {
     bool isRunning = true;
 
-    struct Node* head = CreateNewLine();
-    struct Node* current = head;
+    LList* list = CreateList();
+
+    Node* head = CreateNewLine(list);
 
     while (isRunning)
     {
+        printf("\n");
+        printf("*** \n");
+        printf("\n");
         printf("1 - append text symbols to the end \n");
         printf("2 - start a new line \n");
         printf("3 - save the text to the file \n");
@@ -86,15 +132,42 @@ int main()
         {
             case 1: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                Node* currLine = list -> tail;
+
+                printf("Please, enter text to append: \n");
+
+                int tempChar = 0;
+
+                while (true)
+                {
+                    tempChar = getchar();
+
+                    if (tempChar == '\n' || tempChar == EOF)
+                    {
+                        break;
+                    }
+
+                    if (currLine -> currLength == currLine -> capacity - 1)
+                    {
+                        IncreaseLineSize(currLine);
+                    }
+
+                    currLine -> letters[currLine -> currLength] = tempChar;
+
+                    currLine -> currLength++;
+                }
+
+                currLine -> letters[currLine -> currLength] = '\0';
+
                 break;
             }
 
             case 2: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                CreateNewLine(list);
+
+                printf("New line is started. \n");
+
                 break;
             }
 
@@ -114,15 +187,120 @@ int main()
 
             case 5: 
             {
-                printf("The command is not implemented. \n");
                 printf("\n");
+
+                Node* curr = list -> head;
+
+                while (curr != NULL)
+                {
+                    printf("%s \n", curr -> letters);
+
+                    curr = curr -> next;
+                }
+
                 break;
             }
 
             case 6: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                //line and symbol indexes block
+
+                printf("Please, enter line index: \n");
+
+                int lineIndexInput;
+                scanf("%d", &lineIndexInput);
+
+                getchar();
+
+                Node* curr = list -> head;
+
+                int count = 0;
+
+                while (curr != NULL && count < lineIndexInput)
+                {
+                    curr = curr -> next;
+
+                    count++;
+                }
+
+                if (curr == NULL)
+                {
+                    printf("Line index out of bounds.");
+
+                    break;
+                }
+
+                printf("Please, enter symbol index: \n");
+
+                int symbolIndexInput;
+                scanf("%d", &symbolIndexInput);
+
+                getchar();
+
+                if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+                {
+                    printf("Symbol index out of bounds.");
+
+                    break;
+                }
+
+                // insertion temporary buffer block
+
+                printf("Please, enter text to insert: \n");
+
+                int insertionCapacity = 5;
+
+                char* insertionBuff = (char*)malloc(sizeof(char) * insertionCapacity);
+
+                int insertionLength = 0;
+
+                int tempChar = 0;
+
+                while (true)
+                {
+                    tempChar = getchar();
+
+                    if (tempChar == '\n' || tempChar == EOF)
+                    {
+                        break;
+                    }
+
+                    if (insertionLength >= insertionCapacity - 1)
+                    {
+                        insertionCapacity *= 2;
+                        insertionBuff = realloc(insertionBuff, insertionCapacity);
+                    }
+
+                    insertionBuff[insertionLength] = tempChar;
+
+                    insertionLength++;
+                }
+
+                insertionBuff[insertionLength] = '\0';
+
+                // insertion block
+
+                int newLineLength = curr -> currLength + insertionLength;
+
+                while (newLineLength >= curr -> capacity)
+                {
+                    IncreaseLineSize(curr);
+                }
+
+                for (int i = curr -> currLength; i >= symbolIndexInput; i--)
+                {
+                    curr -> letters[i + insertionLength] = curr -> letters[i];
+                }
+
+                for (int i = 0; i < insertionLength; i++)
+                {
+                    curr -> letters[symbolIndexInput + i] = insertionBuff[i];
+                }
+
+                curr -> currLength = newLineLength;
+
+                free(insertionBuff);
+
                 break;
             }
 
@@ -137,7 +315,7 @@ int main()
             {
                 printf("Exiting the program. \n");
                 printf("\n");
-                FreeAllList(head);
+                DestroyList(list);
                 isRunning = false;
                 break;
             }

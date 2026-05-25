@@ -2,8 +2,10 @@
 triple:          'x86_64-apple-darwin'
 binary-path:     '/Users/sofiia/Downloads/plpp_assignment_1/TextEditor/main'
 relocations:
-  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x0, symBinAddr: 0x1000009E0, symSize: 0xE0 }
-  - { offset: 0x8B, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x0, symBinAddr: 0x1000009E0, symSize: 0xE0 }
-  - { offset: 0xB3, size: 0x8, addend: 0x0, symName: _FreeAllList, symObjAddr: 0xE0, symBinAddr: 0x100000AC0, symSize: 0x60 }
-  - { offset: 0x101, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x140, symBinAddr: 0x100000B20, symSize: 0x284 }
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x1000004C0, symSize: 0x40 }
+  - { offset: 0xCC, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x1000004C0, symSize: 0x40 }
+  - { offset: 0xF4, size: 0x8, addend: 0x0, symName: _DestroyList, symObjAddr: 0x40, symBinAddr: 0x100000500, symSize: 0x70 }
+  - { offset: 0x134, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0xB0, symBinAddr: 0x100000570, symSize: 0x140 }
+  - { offset: 0x16A, size: 0x8, addend: 0x0, symName: _IncreaseLineSize, symObjAddr: 0x1F0, symBinAddr: 0x1000006B0, symSize: 0x40 }
+  - { offset: 0x18E, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x230, symBinAddr: 0x1000006F0, symSize: 0x5E4 }
 ...
