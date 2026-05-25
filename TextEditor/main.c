@@ -173,8 +173,52 @@ int main()
 
             case 3: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                char fileName[30];
+
+                printf("Please, enter the file name: \n");
+
+                fgets(fileName, sizeof(fileName), stdin);
+
+                int length = 0;
+
+                while (fileName[length] != '\0')
+                {
+                    if (fileName[length] == '\n')
+                    {
+                        fileName[length] = '\0';
+                        break;
+                    }
+
+                    length++;
+                }
+
+                FILE* file;
+
+                file = fopen(fileName, "w");
+                
+                if (file != NULL)
+                {
+                    if (list -> head == NULL)
+                    {
+                        printf("There is nothing to save.");
+
+                        fclose(file);
+
+                        break;
+                    }
+
+                    Node* curr = list -> head;
+
+                    while (curr != NULL)
+                    {
+                        fprintf(file, "%s\n", curr -> letters);
+                        
+                        curr = curr -> next;
+                    }
+
+                    fclose(file);
+                }
+
                 break;
             }
 
@@ -203,7 +247,7 @@ int main()
 
             case 6: 
             {
-                //line and symbol indexes block
+                // line and symbol indexes block
 
                 printf("Please, enter line index: \n");
 
