@@ -97,6 +97,205 @@ void IncreaseLineSize(Node* line)
     line -> letters = realloc(line -> letters, line -> capacity);
 }
 
+void AppendText(LList* list)
+{
+    Node* currLine = list -> tail;
+
+    printf("Please, enter text to append: \n");
+
+    int tempChar = 0;
+
+    while (true)
+    {
+        tempChar = getchar();
+
+        if (tempChar == '\n' || tempChar == EOF)
+        {
+            break;
+        }
+
+        if (currLine -> currLength == currLine -> capacity - 1)
+        {
+            IncreaseLineSize(currLine);
+        }
+
+        currLine -> letters[currLine -> currLength] = tempChar;
+
+        currLine -> currLength++;
+    }
+
+    currLine -> letters[currLine -> currLength] = '\0';
+}
+
+void SaveToFile(LList* list)
+{
+    char fileName[30];
+
+    printf("Please, enter the file name: \n");
+
+    fgets(fileName, sizeof(fileName), stdin);
+
+    int length = 0;
+
+    while (fileName[length] != '\0')
+    {
+        if (fileName[length] == '\n')
+        {
+            fileName[length] = '\0';
+            break;
+        }
+
+        length++;
+    }
+
+    FILE* file;
+
+    file = fopen(fileName, "w");
+                
+    if (file != NULL)
+    {
+        if (list -> head == NULL)
+        {
+            printf("There is nothing to save.");
+
+            fclose(file);
+
+            return;
+        }
+
+        Node* curr = list -> head;
+
+        while (curr != NULL)
+        {
+            fprintf(file, "%s\n", curr -> letters);
+                        
+            curr = curr -> next;
+        }
+
+        fclose(file);
+    }
+}
+
+void LoadFromFile(LList* list)
+{
+    return;
+}
+
+void PrintToConsole(LList* list)
+{
+    printf("\n");
+
+    Node* curr = list -> head;
+
+    while (curr != NULL)
+    {
+        printf("%s \n", curr -> letters);
+
+        curr = curr -> next;
+    }
+}
+
+void InsertAt(LList* list)
+{
+    // line and symbol indexes block
+
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // insertion temporary buffer block
+
+    printf("Please, enter text to insert: \n");
+
+    int insertionCapacity = 5;
+
+    char* insertionBuff = (char*)malloc(sizeof(char) * insertionCapacity);
+
+    int insertionLength = 0;
+
+    int tempChar = 0;
+
+    while (true)
+    {
+        tempChar = getchar();
+
+        if (tempChar == '\n' || tempChar == EOF)
+        {
+            break;
+        }
+
+        if (insertionLength >= insertionCapacity - 1)
+        {
+            insertionCapacity *= 2;
+            insertionBuff = realloc(insertionBuff, insertionCapacity);
+        }
+
+        insertionBuff[insertionLength] = tempChar;
+
+        insertionLength++;
+    }
+
+    insertionBuff[insertionLength] = '\0';
+
+    // insertion block
+
+    int newLineLength = curr -> currLength + insertionLength;
+
+    while (newLineLength >= curr -> capacity)
+    {
+        IncreaseLineSize(curr);
+    }
+
+    for (int i = curr -> currLength; i >= symbolIndexInput; i--)
+    {
+        curr -> letters[i + insertionLength] = curr -> letters[i];
+    }
+
+    for (int i = 0; i < insertionLength; i++)
+    {
+        curr -> letters[symbolIndexInput + i] = insertionBuff[i];
+    }
+
+    curr -> currLength = newLineLength;
+
+    free(insertionBuff);
+}
+
 int main()
 {
     bool isRunning = true;
@@ -132,32 +331,7 @@ int main()
         {
             case 1: 
             {
-                Node* currLine = list -> tail;
-
-                printf("Please, enter text to append: \n");
-
-                int tempChar = 0;
-
-                while (true)
-                {
-                    tempChar = getchar();
-
-                    if (tempChar == '\n' || tempChar == EOF)
-                    {
-                        break;
-                    }
-
-                    if (currLine -> currLength == currLine -> capacity - 1)
-                    {
-                        IncreaseLineSize(currLine);
-                    }
-
-                    currLine -> letters[currLine -> currLength] = tempChar;
-
-                    currLine -> currLength++;
-                }
-
-                currLine -> letters[currLine -> currLength] = '\0';
+                AppendText(list);
 
                 break;
             }
@@ -173,51 +347,7 @@ int main()
 
             case 3: 
             {
-                char fileName[30];
-
-                printf("Please, enter the file name: \n");
-
-                fgets(fileName, sizeof(fileName), stdin);
-
-                int length = 0;
-
-                while (fileName[length] != '\0')
-                {
-                    if (fileName[length] == '\n')
-                    {
-                        fileName[length] = '\0';
-                        break;
-                    }
-
-                    length++;
-                }
-
-                FILE* file;
-
-                file = fopen(fileName, "w");
-                
-                if (file != NULL)
-                {
-                    if (list -> head == NULL)
-                    {
-                        printf("There is nothing to save.");
-
-                        fclose(file);
-
-                        break;
-                    }
-
-                    Node* curr = list -> head;
-
-                    while (curr != NULL)
-                    {
-                        fprintf(file, "%s\n", curr -> letters);
-                        
-                        curr = curr -> next;
-                    }
-
-                    fclose(file);
-                }
+                SaveToFile(list);
 
                 break;
             }
@@ -231,119 +361,14 @@ int main()
 
             case 5: 
             {
-                printf("\n");
-
-                Node* curr = list -> head;
-
-                while (curr != NULL)
-                {
-                    printf("%s \n", curr -> letters);
-
-                    curr = curr -> next;
-                }
+                PrintToConsole(list);
 
                 break;
             }
 
             case 6: 
             {
-                // line and symbol indexes block
-
-                printf("Please, enter line index: \n");
-
-                int lineIndexInput;
-                scanf("%d", &lineIndexInput);
-
-                getchar();
-
-                Node* curr = list -> head;
-
-                int count = 0;
-
-                while (curr != NULL && count < lineIndexInput)
-                {
-                    curr = curr -> next;
-
-                    count++;
-                }
-
-                if (curr == NULL)
-                {
-                    printf("Line index out of bounds.");
-
-                    break;
-                }
-
-                printf("Please, enter symbol index: \n");
-
-                int symbolIndexInput;
-                scanf("%d", &symbolIndexInput);
-
-                getchar();
-
-                if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
-                {
-                    printf("Symbol index out of bounds.");
-
-                    break;
-                }
-
-                // insertion temporary buffer block
-
-                printf("Please, enter text to insert: \n");
-
-                int insertionCapacity = 5;
-
-                char* insertionBuff = (char*)malloc(sizeof(char) * insertionCapacity);
-
-                int insertionLength = 0;
-
-                int tempChar = 0;
-
-                while (true)
-                {
-                    tempChar = getchar();
-
-                    if (tempChar == '\n' || tempChar == EOF)
-                    {
-                        break;
-                    }
-
-                    if (insertionLength >= insertionCapacity - 1)
-                    {
-                        insertionCapacity *= 2;
-                        insertionBuff = realloc(insertionBuff, insertionCapacity);
-                    }
-
-                    insertionBuff[insertionLength] = tempChar;
-
-                    insertionLength++;
-                }
-
-                insertionBuff[insertionLength] = '\0';
-
-                // insertion block
-
-                int newLineLength = curr -> currLength + insertionLength;
-
-                while (newLineLength >= curr -> capacity)
-                {
-                    IncreaseLineSize(curr);
-                }
-
-                for (int i = curr -> currLength; i >= symbolIndexInput; i--)
-                {
-                    curr -> letters[i + insertionLength] = curr -> letters[i];
-                }
-
-                for (int i = 0; i < insertionLength; i++)
-                {
-                    curr -> letters[symbolIndexInput + i] = insertionBuff[i];
-                }
-
-                curr -> currLength = newLineLength;
-
-                free(insertionBuff);
+                InsertAt(list);
 
                 break;
             }
