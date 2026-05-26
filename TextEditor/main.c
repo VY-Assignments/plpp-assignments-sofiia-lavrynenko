@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 typedef struct Node
 {
@@ -173,12 +174,73 @@ void SaveToFile(LList* list)
         }
 
         fclose(file);
+
+        printf("Text successfully saved.");
     }
 }
 
 void LoadFromFile(LList* list)
 {
-    return;
+    char fileName[30];
+
+    printf("Please, enter the file name: \n");
+
+    fgets(fileName, sizeof(fileName), stdin);
+
+    int length = 0;
+
+    while (fileName[length] != '\0')
+    {
+        if (fileName[length] == '\n')
+        {
+            fileName[length] = '\0';
+            break;
+        }
+
+        length++;
+    }
+
+    FILE* file;
+
+    file = fopen(fileName, "r");
+
+    if (file == NULL)
+    {
+        printf("There is an error while opening the file.");
+
+        return;
+    }
+
+    DestroyList(list);
+
+    list = CreateList();
+
+    int tempChar = 0;
+
+    Node* currLine = CreateNewLine(list);
+
+    while ((tempChar = fgetc(file)) != EOF)
+    {
+        if (tempChar == '\n')
+        {
+            currLine = CreateNewLine(list);
+        }
+        else
+        {
+            if (currLine -> currLength == currLine -> capacity - 1)
+            {
+                IncreaseLineSize(currLine);
+            }
+
+            currLine -> letters[currLine -> currLength] = tempChar;
+
+            currLine -> currLength++;
+        }
+    }
+
+    fclose(file);
+
+    printf("Text successfully loaded.");
 }
 
 void PrintToConsole(LList* list)
@@ -296,6 +358,66 @@ void InsertAt(LList* list)
     free(insertionBuff);
 }
 
+void SearchByWord(LList* list)
+{
+    Node* currLine = list -> head;
+
+    if (currLine == NULL)
+    {
+        printf("There is no text.");
+
+        return;
+    }
+    
+    char search[30];
+
+    printf("Please, enter what to search for: \n");
+
+    fgets(search, sizeof(search), stdin);
+
+    int length = 0;
+
+    while (search[length] != '\0')
+    {
+        if (search[length] == '\n')
+        {
+            search[length] = '\0';
+            break;
+        }
+
+        length++;
+    }
+
+    bool found = false;
+
+    int lineIndex = 0;
+
+    while (currLine != NULL)
+    {
+        char* foundPosition = strstr(currLine -> letters, search);
+
+        while (foundPosition != NULL)
+        {
+            int symbolIndex = foundPosition - currLine -> letters; // a char is 1 byte, so it's basicallyy 1005 - 1000 = 5
+
+            printf("Found at: %3d %3d \n", lineIndex, symbolIndex);
+
+            found = true;
+
+            foundPosition = strstr(foundPosition + 1, search);
+        }
+
+        currLine = currLine -> next;
+
+        lineIndex++;
+    }
+
+    if (!found)
+    {
+        printf("Nothing found.");
+    }
+}
+
 int main()
 {
     bool isRunning = true;
@@ -354,8 +476,8 @@ int main()
 
             case 4: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                LoadFromFile(list);
+
                 break;
             }
 
@@ -375,8 +497,8 @@ int main()
 
             case 7: 
             {
-                printf("The command is not implemented. \n");
-                printf("\n");
+                SearchByWord(list);
+
                 break;
             }
 
