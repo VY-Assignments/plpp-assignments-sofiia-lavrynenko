@@ -211,9 +211,22 @@ void LoadFromFile(LList* list)
         return;
     }
 
-    DestroyList(list);
+    Node* curr = list -> head;
 
-    list = CreateList();
+    while (curr != NULL)
+    {
+        Node* nextNode = curr -> next;
+
+        free(curr -> letters);
+
+        free(curr);
+
+        curr = nextNode;
+    }
+
+    list -> head = NULL;
+
+    list -> tail = list -> head;
 
     int tempChar = 0;
 
