@@ -431,6 +431,76 @@ void SearchByWord(LList* list)
     }
 }
 
+void DeleteAt(LList* list)
+{
+    // line and symbol indexes block
+
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // get symbols to delete block
+
+    printf("Enter number of symbols to delete: \n");
+
+    int symbolsToDelete;
+    scanf("%d", &symbolsToDelete);
+
+    if (symbolIndexInput + symbolsToDelete > curr -> currLength)
+    {
+        symbolsToDelete = curr -> currLength - symbolIndexInput;
+    }
+
+    int restOfSymbols = curr -> currLength - symbolIndexInput - symbolsToDelete;
+
+    for (int i = 0; i < restOfSymbols; i++)
+    {
+        int readFrom = symbolIndexInput + symbolsToDelete + i;
+        int writeTo = symbolIndexInput + i;
+
+        curr -> letters[writeTo] = curr -> letters[readFrom];
+    }
+
+    curr -> currLength = curr -> currLength - symbolsToDelete;
+
+    curr -> letters[curr -> currLength] = '\0';
+}
+
 void InsertWithReplace(LList* list)
 {
     // line and symbol indexes block
@@ -622,7 +692,8 @@ int main()
 
             case 8:
             {
-                printf("Command is not implemented. \n");
+                DeleteAt(list);
+                
                 break;
             }
 
@@ -659,7 +730,7 @@ int main()
             case 14:
             {
                 InsertWithReplace(list);
-                
+
                 break;
             }
 

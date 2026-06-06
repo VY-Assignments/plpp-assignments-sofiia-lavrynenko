@@ -2,17 +2,18 @@
 triple:          'x86_64-apple-darwin'
 binary-path:     '/Users/sofiia/Downloads/plpp_assignment_1/TextEditor/main'
 relocations:
-  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000AF0, symSize: 0x40 }
-  - { offset: 0xD9, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000AF0, symSize: 0x40 }
-  - { offset: 0x101, size: 0x8, addend: 0x0, symName: _DestroyList, symObjAddr: 0x40, symBinAddr: 0x100000B30, symSize: 0x70 }
-  - { offset: 0x141, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0xB0, symBinAddr: 0x100000BA0, symSize: 0x140 }
-  - { offset: 0x177, size: 0x8, addend: 0x0, symName: _IncreaseLineSize, symObjAddr: 0x1F0, symBinAddr: 0x100000CE0, symSize: 0x40 }
-  - { offset: 0x19B, size: 0x8, addend: 0x0, symName: _AppendText, symObjAddr: 0x230, symBinAddr: 0x100000D20, symSize: 0xC0 }
-  - { offset: 0x1DB, size: 0x8, addend: 0x0, symName: _SaveToFile, symObjAddr: 0x2F0, symBinAddr: 0x100000DE0, symSize: 0x150 }
-  - { offset: 0x247, size: 0x8, addend: 0x0, symName: _LoadFromFile, symObjAddr: 0x440, symBinAddr: 0x100000F30, symSize: 0x1E0 }
-  - { offset: 0x2E0, size: 0x8, addend: 0x0, symName: _PrintToConsole, symObjAddr: 0x620, symBinAddr: 0x100001110, symSize: 0x60 }
-  - { offset: 0x315, size: 0x8, addend: 0x0, symName: _InsertAt, symObjAddr: 0x680, symBinAddr: 0x100001170, symSize: 0x270 }
-  - { offset: 0x3FD, size: 0x8, addend: 0x0, symName: _SearchByWord, symObjAddr: 0x8F0, symBinAddr: 0x1000013E0, symSize: 0x180 }
-  - { offset: 0x4AD, size: 0x8, addend: 0x0, symName: _InsertWithReplace, symObjAddr: 0xA70, symBinAddr: 0x100001560, symSize: 0x240 }
-  - { offset: 0x577, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0xCB0, symBinAddr: 0x1000017A0, symSize: 0x340 }
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000900, symSize: 0x40 }
+  - { offset: 0xD9, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000900, symSize: 0x40 }
+  - { offset: 0x101, size: 0x8, addend: 0x0, symName: _DestroyList, symObjAddr: 0x40, symBinAddr: 0x100000940, symSize: 0x70 }
+  - { offset: 0x141, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0xB0, symBinAddr: 0x1000009B0, symSize: 0x140 }
+  - { offset: 0x177, size: 0x8, addend: 0x0, symName: _IncreaseLineSize, symObjAddr: 0x1F0, symBinAddr: 0x100000AF0, symSize: 0x40 }
+  - { offset: 0x19B, size: 0x8, addend: 0x0, symName: _AppendText, symObjAddr: 0x230, symBinAddr: 0x100000B30, symSize: 0xC0 }
+  - { offset: 0x1DB, size: 0x8, addend: 0x0, symName: _SaveToFile, symObjAddr: 0x2F0, symBinAddr: 0x100000BF0, symSize: 0x150 }
+  - { offset: 0x247, size: 0x8, addend: 0x0, symName: _LoadFromFile, symObjAddr: 0x440, symBinAddr: 0x100000D40, symSize: 0x1E0 }
+  - { offset: 0x2E0, size: 0x8, addend: 0x0, symName: _PrintToConsole, symObjAddr: 0x620, symBinAddr: 0x100000F20, symSize: 0x60 }
+  - { offset: 0x315, size: 0x8, addend: 0x0, symName: _InsertAt, symObjAddr: 0x680, symBinAddr: 0x100000F80, symSize: 0x270 }
+  - { offset: 0x3FD, size: 0x8, addend: 0x0, symName: _SearchByWord, symObjAddr: 0x8F0, symBinAddr: 0x1000011F0, symSize: 0x180 }
+  - { offset: 0x4AD, size: 0x8, addend: 0x0, symName: _DeleteAt, symObjAddr: 0xA70, symBinAddr: 0x100001370, symSize: 0x1D0 }
+  - { offset: 0x576, size: 0x8, addend: 0x0, symName: _InsertWithReplace, symObjAddr: 0xC40, symBinAddr: 0x100001540, symSize: 0x240 }
+  - { offset: 0x640, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0xE80, symBinAddr: 0x100001780, symSize: 0x33C }
 ...
