@@ -411,7 +411,7 @@ void SearchByWord(LList* list)
 
         while (foundPosition != NULL)
         {
-            int symbolIndex = foundPosition - currLine -> letters; // a char is 1 byte, so it's basicallyy 1005 - 1000 = 5
+            int symbolIndex = foundPosition - currLine -> letters; // a char is 1 byte, so it's basically 1005 - 1000 = 5
 
             printf("Found at: %3d %3d \n", lineIndex, symbolIndex);
 
@@ -451,7 +451,14 @@ int main()
         printf("5 - print current text to the console \n");
         printf("6 - insert text by line and symbol index \n");
         printf("7 - search by word \n");
-        printf("8 - exit \n");
+        printf("8 - delete by indexes and number of symbols \n");
+        printf("9 - undo \n");
+        printf("10 - redo \n");
+        printf("11 - cut by indexes and number of symbols \n");
+        printf("12 - paste by indexes \n");
+        printf("13 - copy by indexes and number of symbols \n");
+        printf("14 - insert with replacement \n");
+        printf("15 - exit \n");
         printf("\n");
         printf("**** \n");
         printf("\n");
@@ -515,7 +522,49 @@ int main()
                 break;
             }
 
-            case 8: 
+            case 8:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 9:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 10:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 11:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 12:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 13:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 14:
+            {
+                printf("Command is not implemented. \n");
+                break;
+            }
+
+            case 15: 
             {
                 printf("Exiting the program. \n");
                 printf("\n");
