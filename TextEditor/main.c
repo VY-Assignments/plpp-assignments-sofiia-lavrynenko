@@ -431,6 +431,104 @@ void SearchByWord(LList* list)
     }
 }
 
+void InsertWithReplace(LList* list)
+{
+    // line and symbol indexes block
+    
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // insertion temporary bufffer block
+
+    printf("Please, enter text to insert: \n");
+
+    int insertionCapacity = 5;
+
+    char* insertionBuff = (char*)malloc(sizeof(char) * insertionCapacity);
+
+    int insertionLength = 0;
+
+    int tempChar = 0;
+
+    while (true)
+    {
+        tempChar = getchar();
+
+        if (tempChar == '\n' || tempChar == EOF)
+        {
+            break;
+        }
+
+        if (insertionLength >= insertionCapacity - 1)
+        {
+            insertionCapacity *= 2;
+            insertionBuff = realloc(insertionBuff, insertionCapacity);
+        }
+
+        insertionBuff[insertionLength] = tempChar;
+
+        insertionLength++;
+    }
+
+    // insertion with replacement block
+
+    int newLength = symbolIndexInput + insertionLength;
+
+    while (newLength > curr -> capacity)
+    {
+        IncreaseLineSize(curr);
+    }
+
+    for (int i = 0; i < insertionLength; i++)
+    {
+        curr -> letters[symbolIndexInput + i] = insertionBuff[i];
+    }
+
+    if (newLength > curr -> currLength)
+    {
+        curr -> currLength = newLength;
+        curr -> letters[newLength] = '\0';
+    }
+
+    free(insertionBuff);
+}
+
 int main()
 {
     bool isRunning = true;
@@ -560,7 +658,8 @@ int main()
 
             case 14:
             {
-                printf("Command is not implemented. \n");
+                InsertWithReplace(list);
+                
                 break;
             }
 
