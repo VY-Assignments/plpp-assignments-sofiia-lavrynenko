@@ -17,6 +17,13 @@ typedef struct LList
     Node* tail;
 } LList;
 
+typedef struct CLipboard
+{
+    char* clipboard;
+    int capacity;
+    int currLength; 
+} Clipboard;
+
 LList* CreateList()
 {
     LList* list = (LList*)malloc(sizeof(LList));
@@ -431,6 +438,252 @@ void SearchByWord(LList* list)
     }
 }
 
+void Cut(LList* list, Clipboard* clipboard)
+{
+    // line and symbol indexes block
+
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // get symbols to copy block
+
+    printf("Enter number of symbols to cut: \n");
+
+    int symbolsToCut;
+    scanf("%d", &symbolsToCut);
+
+    // copy block
+
+    if (symbolIndexInput + symbolsToCut > curr -> currLength)
+    {
+        symbolsToCut = curr -> currLength - symbolIndexInput;
+    }
+
+    if (clipboard -> capacity < symbolsToCut + 1)
+    {
+        clipboard -> capacity = (symbolsToCut + 1) * 2;
+
+        clipboard -> clipboard = realloc(clipboard -> clipboard, sizeof(char) * clipboard -> capacity);
+    }
+
+    int clipboardIndex = 0;
+
+    for (int i = symbolIndexInput; i < symbolsToCut + symbolIndexInput; i++)
+    {
+        clipboard -> clipboard[clipboardIndex] = curr -> letters[i];
+
+        clipboardIndex++;
+    }
+
+    clipboard -> clipboard[symbolsToCut] = '\0';
+
+    clipboard -> currLength = symbolsToCut;
+
+    // delete block
+
+    int restOfSymbols = curr -> currLength - symbolIndexInput - symbolsToCut;
+
+    for (int i = 0; i < restOfSymbols; i++)
+    {
+        int readFrom = symbolIndexInput + symbolsToCut + i;
+        int writeTo = symbolIndexInput + i;
+
+        curr -> letters[writeTo] = curr -> letters[readFrom];
+    }
+
+    curr -> currLength = curr -> currLength - symbolsToCut;
+
+    curr -> letters[curr -> currLength] = '\0';
+}
+
+void Paste(LList* list, Clipboard* clipboard)
+{
+    // check if there's something to paste block
+
+    if (clipboard == NULL || clipboard -> currLength == 0)
+    {
+        printf("The clipboard is empty. Nothing to paste. \n");
+
+        return;
+    }
+
+    // line and symbol indexes block
+
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // paste block
+
+    int newLineLength = curr -> currLength + clipboard -> currLength;
+
+    while (newLineLength >= curr -> capacity)
+    {
+        IncreaseLineSize(curr);
+    }
+
+    for (int i = curr -> currLength; i >= symbolIndexInput; i--)
+    {
+        curr -> letters[i + clipboard -> currLength] = curr -> letters[i];
+    }
+
+    for (int i = 0; i < clipboard -> currLength; i++)
+    {
+        curr -> letters[symbolIndexInput + i] = clipboard -> clipboard[i];
+    }
+
+    curr -> currLength = newLineLength;
+}
+
+void Copy(LList* list, Clipboard* clipboard)
+{
+    // line and symbol indexes block
+
+    printf("Please, enter line index: \n");
+
+    int lineIndexInput;
+    scanf("%d", &lineIndexInput);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < lineIndexInput)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Please, enter symbol index: \n");
+
+    int symbolIndexInput;
+    scanf("%d", &symbolIndexInput);
+
+    getchar();
+
+    if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    // get symbols to copy block
+
+    printf("Enter number of symbols to copy: \n");
+
+    int symbolsToCopy;
+    scanf("%d", &symbolsToCopy);
+
+    // copy block
+
+    if (symbolIndexInput + symbolsToCopy > curr -> currLength)
+    {
+        symbolsToCopy = curr -> currLength - symbolIndexInput;
+    }
+
+    if (clipboard -> capacity < symbolsToCopy + 1)
+    {
+        clipboard -> capacity = (symbolsToCopy + 1) * 2;
+
+        clipboard -> clipboard = realloc(clipboard -> clipboard, sizeof(char) * clipboard -> capacity);
+    }
+
+    int clipboardIndex = 0;
+
+    for (int i = symbolIndexInput; i < symbolsToCopy + symbolIndexInput; i++)
+    {
+        clipboard -> clipboard[clipboardIndex] = curr -> letters[i];
+
+        clipboardIndex++;
+    }
+
+    clipboard -> clipboard[symbolsToCopy] = '\0';
+
+    clipboard -> currLength = symbolsToCopy;
+}
+
 void DeleteAt(LList* list)
 {
     // line and symbol indexes block
@@ -480,6 +733,8 @@ void DeleteAt(LList* list)
 
     int symbolsToDelete;
     scanf("%d", &symbolsToDelete);
+
+    // delete block
 
     if (symbolIndexInput + symbolsToDelete > curr -> currLength)
     {
@@ -544,7 +799,7 @@ void InsertWithReplace(LList* list)
         return;
     }
 
-    // insertion temporary bufffer block
+    // insertion temporary buffer block
 
     printf("Please, enter text to insert: \n");
 
@@ -606,6 +861,12 @@ int main()
     LList* list = CreateList();
 
     Node* head = CreateNewLine(list);
+
+    Clipboard clipboard;
+
+    clipboard.capacity = 5;
+    clipboard.currLength = 0;
+    clipboard.clipboard = (char*)malloc(sizeof(char) * clipboard.capacity);
 
     while (isRunning)
     {
@@ -717,13 +978,15 @@ int main()
 
             case 12:
             {
-                printf("Command is not implemented. \n");
+                Paste(list, &clipboard);
+
                 break;
             }
 
             case 13:
             {
-                printf("Command is not implemented. \n");
+                Copy(list, &clipboard);
+
                 break;
             }
 
@@ -739,6 +1002,7 @@ int main()
                 printf("Exiting the program. \n");
                 printf("\n");
                 DestroyList(list);
+                free(clipboard.clipboard);
                 isRunning = false;
                 break;
             }
