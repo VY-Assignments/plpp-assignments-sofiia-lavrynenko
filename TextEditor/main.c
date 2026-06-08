@@ -24,6 +24,17 @@ typedef struct CLipboard
     int currLength; 
 } Clipboard;
 
+typedef struct HistoryNode
+{
+    LList* version;
+    struct HistoryNode* next;
+} HistoryNode;
+
+typedef struct HistoryStack
+{
+    HistoryNode* top;
+} HistoryStack;
+
 LList* CreateList()
 {
     LList* list = (LList*)malloc(sizeof(LList));
@@ -53,6 +64,87 @@ void DestroyList(LList* list)
     }
 
     free(list);
+}
+
+LList* CopyLList(LList* orig)
+{
+    LList* newList = CreateList();
+
+    Node* currOrig = orig -> head;
+
+    while (currOrig != NULL)
+    {
+        Node* newNode = (Node*)malloc(sizeof(Node));
+
+        newNode -> capacity = currOrig -> capacity;
+
+        newNode -> currLength = currOrig -> currLength;
+
+        newNode -> letters = (char*)malloc(sizeof(char) * newNode -> capacity);
+
+        for (int i = 0; i < currOrig -> currLength; i++)
+        {
+            newNode -> letters[i] = currOrig -> letters[i];
+        }
+
+        newNode -> next = NULL;
+
+        if (newList -> head == NULL)
+        {
+            newList -> head = newNode;
+            newList -> tail = newNode;
+        }
+
+        else
+        {
+            newList -> tail -> next = newNode;
+            newList -> tail = newNode;
+        }
+
+        currOrig = currOrig -> next;
+    }
+
+    return newList;
+}
+
+HistoryStack* CreateHistoryStack()
+{
+    HistoryStack* history = (HistoryStack*)malloc(sizeof(HistoryStack));
+
+    history -> top = NULL;
+
+    return history;
+}
+
+HistoryNode* CreateNewHistoryNode(HistoryStack* history, LList* list)
+{
+    HistoryNode* newNode = (HistoryNode*)malloc(sizeof(HistoryNode));
+
+    newNode -> version = CopyLList(list);
+
+    newNode -> next = history -> top;
+
+    history -> top = newNode;
+
+    return newNode;
+}
+
+void DestroyHistoryStack(HistoryStack* history)
+{
+    HistoryNode* curr = history -> top;
+
+    while (curr != NULL)
+    {
+        DestroyList(curr -> version);
+
+        HistoryNode* afterCurr = curr -> next;
+
+        free(curr);
+
+        curr = afterCurr;
+    }
+
+    free(history);
 }
 
 Node* CreateNewLine(LList* list)
@@ -530,6 +622,8 @@ void Cut(LList* list, Clipboard* clipboard)
     curr -> currLength = curr -> currLength - symbolsToCut;
 
     curr -> letters[curr -> currLength] = '\0';
+
+    printf("Cutted. \n");
 }
 
 void Paste(LList* list, Clipboard* clipboard)
@@ -604,6 +698,8 @@ void Paste(LList* list, Clipboard* clipboard)
     }
 
     curr -> currLength = newLineLength;
+
+    printf("Pasted. \n");
 }
 
 void Copy(LList* list, Clipboard* clipboard)
@@ -682,6 +778,8 @@ void Copy(LList* list, Clipboard* clipboard)
     clipboard -> clipboard[symbolsToCopy] = '\0';
 
     clipboard -> currLength = symbolsToCopy;
+
+    printf("Copied. \n");
 }
 
 void DeleteAt(LList* list)
@@ -868,6 +966,8 @@ int main()
     clipboard.currLength = 0;
     clipboard.clipboard = (char*)malloc(sizeof(char) * clipboard.capacity);
 
+    HistoryStack* history = CreateHistoryStack();
+
     while (isRunning)
     {
         printf("\n");
@@ -972,7 +1072,8 @@ int main()
 
             case 11:
             {
-                printf("Command is not implemented. \n");
+                Cut(list, &clipboard);
+
                 break;
             }
 
@@ -1003,6 +1104,7 @@ int main()
                 printf("\n");
                 DestroyList(list);
                 free(clipboard.clipboard);
+                DestroyHistoryStack(history);
                 isRunning = false;
                 break;
             }
