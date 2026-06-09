@@ -2,25 +2,26 @@
 triple:          'x86_64-apple-darwin'
 binary-path:     '/Users/sofiia/Downloads/plpp_assignment_1/TextEditor/main'
 relocations:
-  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000F70, symSize: 0x40 }
-  - { offset: 0x134, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000F70, symSize: 0x40 }
-  - { offset: 0x15C, size: 0x8, addend: 0x0, symName: _DestroyList, symObjAddr: 0x40, symBinAddr: 0x100000FB0, symSize: 0x70 }
-  - { offset: 0x19C, size: 0x8, addend: 0x0, symName: _CopyLList, symObjAddr: 0xB0, symBinAddr: 0x100001020, symSize: 0x120 }
-  - { offset: 0x218, size: 0x8, addend: 0x0, symName: _CreateHistoryStack, symObjAddr: 0x1D0, symBinAddr: 0x100001140, symSize: 0x30 }
-  - { offset: 0x240, size: 0x8, addend: 0x0, symName: _CreateNewHistoryNode, symObjAddr: 0x200, symBinAddr: 0x100001170, symSize: 0x60 }
-  - { offset: 0x284, size: 0x8, addend: 0x0, symName: _DestroyHistoryStack, symObjAddr: 0x260, symBinAddr: 0x1000011D0, symSize: 0x60 }
-  - { offset: 0x2D2, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x2C0, symBinAddr: 0x100001230, symSize: 0x140 }
-  - { offset: 0x308, size: 0x8, addend: 0x0, symName: _IncreaseLineSize, symObjAddr: 0x400, symBinAddr: 0x100001370, symSize: 0x40 }
-  - { offset: 0x32C, size: 0x8, addend: 0x0, symName: _AppendText, symObjAddr: 0x440, symBinAddr: 0x1000013B0, symSize: 0xC0 }
-  - { offset: 0x36C, size: 0x8, addend: 0x0, symName: _SaveToFile, symObjAddr: 0x500, symBinAddr: 0x100001470, symSize: 0x150 }
-  - { offset: 0x3D9, size: 0x8, addend: 0x0, symName: _LoadFromFile, symObjAddr: 0x650, symBinAddr: 0x1000015C0, symSize: 0x1E0 }
-  - { offset: 0x47B, size: 0x8, addend: 0x0, symName: _PrintToConsole, symObjAddr: 0x830, symBinAddr: 0x1000017A0, symSize: 0x60 }
-  - { offset: 0x4B0, size: 0x8, addend: 0x0, symName: _InsertAt, symObjAddr: 0x890, symBinAddr: 0x100001800, symSize: 0x270 }
-  - { offset: 0x598, size: 0x8, addend: 0x0, symName: _SearchByWord, symObjAddr: 0xB00, symBinAddr: 0x100001A70, symSize: 0x180 }
-  - { offset: 0x648, size: 0x8, addend: 0x0, symName: _Cut, symObjAddr: 0xC80, symBinAddr: 0x100001BF0, symSize: 0x290 }
-  - { offset: 0x74D, size: 0x8, addend: 0x0, symName: _Paste, symObjAddr: 0xF10, symBinAddr: 0x100001E80, symSize: 0x210 }
-  - { offset: 0x807, size: 0x8, addend: 0x0, symName: _Copy, symObjAddr: 0x1120, symBinAddr: 0x100002090, symSize: 0x210 }
-  - { offset: 0x8B3, size: 0x8, addend: 0x0, symName: _DeleteAt, symObjAddr: 0x1330, symBinAddr: 0x1000022A0, symSize: 0x1D0 }
-  - { offset: 0x97C, size: 0x8, addend: 0x0, symName: _InsertWithReplace, symObjAddr: 0x1500, symBinAddr: 0x100002470, symSize: 0x240 }
-  - { offset: 0xA46, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x1740, symBinAddr: 0x1000026B0, symSize: 0x370 }
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000E50, symSize: 0x40 }
+  - { offset: 0x134, size: 0x8, addend: 0x0, symName: _CreateList, symObjAddr: 0x0, symBinAddr: 0x100000E50, symSize: 0x40 }
+  - { offset: 0x15C, size: 0x8, addend: 0x0, symName: _DestroyList, symObjAddr: 0x40, symBinAddr: 0x100000E90, symSize: 0x70 }
+  - { offset: 0x19C, size: 0x8, addend: 0x0, symName: _CopyLList, symObjAddr: 0xB0, symBinAddr: 0x100000F00, symSize: 0x120 }
+  - { offset: 0x218, size: 0x8, addend: 0x0, symName: _CreateHistoryStack, symObjAddr: 0x1D0, symBinAddr: 0x100001020, symSize: 0x30 }
+  - { offset: 0x240, size: 0x8, addend: 0x0, symName: _CreateNewHistoryNode, symObjAddr: 0x200, symBinAddr: 0x100001050, symSize: 0x60 }
+  - { offset: 0x284, size: 0x8, addend: 0x0, symName: _DestroyHistoryStack, symObjAddr: 0x260, symBinAddr: 0x1000010B0, symSize: 0x60 }
+  - { offset: 0x2D2, size: 0x8, addend: 0x0, symName: _CreateNewLine, symObjAddr: 0x2C0, symBinAddr: 0x100001110, symSize: 0x140 }
+  - { offset: 0x308, size: 0x8, addend: 0x0, symName: _IncreaseLineSize, symObjAddr: 0x400, symBinAddr: 0x100001250, symSize: 0x40 }
+  - { offset: 0x32C, size: 0x8, addend: 0x0, symName: _AppendText, symObjAddr: 0x440, symBinAddr: 0x100001290, symSize: 0xC0 }
+  - { offset: 0x36C, size: 0x8, addend: 0x0, symName: _SaveToFile, symObjAddr: 0x500, symBinAddr: 0x100001350, symSize: 0x150 }
+  - { offset: 0x3D9, size: 0x8, addend: 0x0, symName: _LoadFromFile, symObjAddr: 0x650, symBinAddr: 0x1000014A0, symSize: 0x1E0 }
+  - { offset: 0x47B, size: 0x8, addend: 0x0, symName: _PrintToConsole, symObjAddr: 0x830, symBinAddr: 0x100001680, symSize: 0x60 }
+  - { offset: 0x4B0, size: 0x8, addend: 0x0, symName: _InsertAt, symObjAddr: 0x890, symBinAddr: 0x1000016E0, symSize: 0x270 }
+  - { offset: 0x598, size: 0x8, addend: 0x0, symName: _SearchByWord, symObjAddr: 0xB00, symBinAddr: 0x100001950, symSize: 0x180 }
+  - { offset: 0x648, size: 0x8, addend: 0x0, symName: _Cut, symObjAddr: 0xC80, symBinAddr: 0x100001AD0, symSize: 0x290 }
+  - { offset: 0x74D, size: 0x8, addend: 0x0, symName: _Paste, symObjAddr: 0xF10, symBinAddr: 0x100001D60, symSize: 0x210 }
+  - { offset: 0x807, size: 0x8, addend: 0x0, symName: _Copy, symObjAddr: 0x1120, symBinAddr: 0x100001F70, symSize: 0x210 }
+  - { offset: 0x8B3, size: 0x8, addend: 0x0, symName: _DeleteAt, symObjAddr: 0x1330, symBinAddr: 0x100002180, symSize: 0x1D0 }
+  - { offset: 0x97C, size: 0x8, addend: 0x0, symName: _Undo, symObjAddr: 0x1500, symBinAddr: 0x100002350, symSize: 0x90 }
+  - { offset: 0x9C0, size: 0x8, addend: 0x0, symName: _InsertWithReplace, symObjAddr: 0x1590, symBinAddr: 0x1000023E0, symSize: 0x240 }
+  - { offset: 0xA8A, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x17D0, symBinAddr: 0x100002620, symSize: 0x3CC }
 ...

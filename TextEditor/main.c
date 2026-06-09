@@ -147,6 +147,29 @@ void DestroyHistoryStack(HistoryStack* history)
     free(history);
 }
 
+void ClearRedoStack(HistoryStack* forRedo)
+{
+    if (forRedo == NULL)
+    {
+        return;
+    }
+
+    HistoryNode* curr = forRedo -> top;
+
+    while (curr != NULL)
+    {
+        DestroyList(curr -> version);
+
+        HistoryNode* afterCurr = curr -> next;
+
+        free(curr);
+
+        curr = afterCurr;
+    }
+
+    forRedo -> top = NULL;
+}
+
 Node* CreateNewLine(LList* list)
 {
     Node* newNode = (Node*)malloc(sizeof(Node));
@@ -854,6 +877,54 @@ void DeleteAt(LList* list)
     curr -> letters[curr -> currLength] = '\0';
 }
 
+void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo)
+{
+    if (history == NULL || history -> top == NULL)
+    {
+        printf("Nothing to undo. History is empty. \n");
+
+        return;
+    }
+
+    CreateNewHistoryNode(forRedo, *list);
+
+    HistoryNode* temp = history -> top;
+
+    DestroyList(*list);
+
+    *list = temp -> version;
+
+    history -> top = history -> top -> next;
+
+    free(temp);
+
+    printf("Undo is finished. \n");
+}
+
+void Redo(LList** list, HistoryStack* forRedo, HistoryStack* history)
+{
+    if (forRedo == NULL || forRedo -> top == NULL)
+    {
+        printf("Nothing to redo. History is empty. \n");
+
+        return;
+    }
+
+    CreateNewHistoryNode(history, *list);
+
+    HistoryNode* temp = forRedo -> top;
+
+    DestroyList(*list);
+
+    *list = temp -> version;
+
+    forRedo -> top = forRedo -> top -> next;
+
+    free(temp);
+
+    printf("Redo is finished. \n");
+}
+
 void InsertWithReplace(LList* list)
 {
     // line and symbol indexes block
@@ -946,8 +1017,9 @@ void InsertWithReplace(LList* list)
     if (newLength > curr -> currLength)
     {
         curr -> currLength = newLength;
-        curr -> letters[newLength] = '\0';
     }
+
+    curr -> letters[curr -> currLength] = '\0';
 
     free(insertionBuff);
 }
@@ -967,6 +1039,8 @@ int main()
     clipboard.clipboard = (char*)malloc(sizeof(char) * clipboard.capacity);
 
     HistoryStack* history = CreateHistoryStack();
+
+    HistoryStack* forRedo = CreateHistoryStack();
 
     while (isRunning)
     {
@@ -1002,6 +1076,10 @@ int main()
         {
             case 1: 
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 AppendText(list);
 
                 break;
@@ -1009,6 +1087,10 @@ int main()
 
             case 2: 
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 CreateNewLine(list);
 
                 printf("New line is started. \n");
@@ -1025,6 +1107,12 @@ int main()
 
             case 4: 
             {
+                DestroyHistoryStack(history);
+                history = CreateHistoryStack();
+
+                DestroyHistoryStack(forRedo);
+                forRedo = CreateHistoryStack();
+
                 LoadFromFile(list);
 
                 break;
@@ -1039,6 +1127,10 @@ int main()
 
             case 6: 
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 InsertAt(list);
 
                 break;
@@ -1053,6 +1145,10 @@ int main()
 
             case 8:
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 DeleteAt(list);
                 
                 break;
@@ -1060,18 +1156,24 @@ int main()
 
             case 9:
             {
-                printf("Command is not implemented. \n");
+                Undo(&list, history, forRedo);
+
                 break;
             }
 
             case 10:
             {
-                printf("Command is not implemented. \n");
+                Redo(&list, forRedo, history);
+
                 break;
             }
 
             case 11:
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 Cut(list, &clipboard);
 
                 break;
@@ -1079,6 +1181,10 @@ int main()
 
             case 12:
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 Paste(list, &clipboard);
 
                 break;
@@ -1093,6 +1199,10 @@ int main()
 
             case 14:
             {
+                ClearRedoStack(forRedo);
+
+                CreateNewHistoryNode(history, list);
+
                 InsertWithReplace(list);
 
                 break;
@@ -1102,10 +1212,16 @@ int main()
             {
                 printf("Exiting the program. \n");
                 printf("\n");
+
                 DestroyList(list);
+
                 free(clipboard.clipboard);
+
                 DestroyHistoryStack(history);
+                DestroyHistoryStack(forRedo);
+
                 isRunning = false;
+
                 break;
             }
 
@@ -1113,6 +1229,7 @@ int main()
             {
                 printf("Incorrect input. \n");
                 printf("\n");
+
                 break;
             }
         }
