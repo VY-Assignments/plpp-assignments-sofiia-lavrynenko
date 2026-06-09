@@ -24,9 +24,16 @@ typedef struct CLipboard
     int currLength; 
 } Clipboard;
 
+typedef struct Cursor
+{
+    int lineIndex;
+    int symbolIndex;
+} Cursor;
+
 typedef struct HistoryNode
 {
     LList* version;
+    Cursor cursorVersion;
     struct HistoryNode* next;
 } HistoryNode;
 
@@ -34,12 +41,6 @@ typedef struct HistoryStack
 {
     HistoryNode* top;
 } HistoryStack;
-
-typedef struct Cursor
-{
-    int lineIndex;
-    int symbolIndex;
-} Cursor;
 
 LList* CreateList()
 {
@@ -122,11 +123,13 @@ HistoryStack* CreateHistoryStack()
     return history;
 }
 
-HistoryNode* CreateNewHistoryNode(HistoryStack* history, LList* list)
+HistoryNode* CreateNewHistoryNode(HistoryStack* history, LList* list, Cursor cursor)
 {
     HistoryNode* newNode = (HistoryNode*)malloc(sizeof(HistoryNode));
 
     newNode -> version = CopyLList(list);
+
+    newNode -> cursorVersion = cursor;
 
     newNode -> next = history -> top;
 
@@ -365,6 +368,10 @@ void LoadFromFile(LList* list, Cursor* cursor)
 
     list -> tail = list -> head;
 
+    cursor -> lineIndex = -1;
+
+    cursor -> symbolIndex = 0;
+
     int tempChar = 0;
 
     Node* currLine = CreateNewLine(list, cursor);
@@ -387,6 +394,8 @@ void LoadFromFile(LList* list, Cursor* cursor)
             currLine -> currLength++;
         }
     }
+
+    cursor -> symbolIndex = currLine -> currLength;
 
     fclose(file);
 
@@ -586,6 +595,8 @@ void Cut(LList* list, Clipboard* clipboard, Cursor* cursor)
     int symbolsToCut;
     scanf("%d", &symbolsToCut);
 
+    getchar();
+
     // copy block
 
     if (symbolIndexInput + symbolsToCut > curr -> currLength)
@@ -726,6 +737,8 @@ void Copy(LList* list, Clipboard* clipboard, Cursor* cursor)
     int symbolsToCopy;
     scanf("%d", &symbolsToCopy);
 
+    getchar();
+
     // copy block
 
     if (symbolIndexInput + symbolsToCopy > curr -> currLength)
@@ -789,6 +802,8 @@ void DeleteAt(LList* list, Cursor* cursor)
     int symbolsToDelete;
     scanf("%d", &symbolsToDelete);
 
+    getchar();
+
     // delete block
 
     if (symbolIndexInput + symbolsToDelete > curr -> currLength)
@@ -813,7 +828,7 @@ void DeleteAt(LList* list, Cursor* cursor)
     cursor -> symbolIndex -= symbolsToDelete;
 }
 
-void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo)
+void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo, Cursor* cursor)
 {
     if (history == NULL || history -> top == NULL)
     {
@@ -822,13 +837,15 @@ void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo)
         return;
     }
 
-    CreateNewHistoryNode(forRedo, *list);
+    CreateNewHistoryNode(forRedo, *list, *cursor);
 
     HistoryNode* temp = history -> top;
 
     DestroyList(*list);
 
     *list = temp -> version;
+
+    *cursor = temp -> cursorVersion;
 
     history -> top = history -> top -> next;
 
@@ -837,7 +854,7 @@ void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo)
     printf("Undo is finished. \n");
 }
 
-void Redo(LList** list, HistoryStack* forRedo, HistoryStack* history)
+void Redo(LList** list, HistoryStack* forRedo, HistoryStack* history, Cursor* cursor)
 {
     if (forRedo == NULL || forRedo -> top == NULL)
     {
@@ -846,13 +863,15 @@ void Redo(LList** list, HistoryStack* forRedo, HistoryStack* history)
         return;
     }
 
-    CreateNewHistoryNode(history, *list);
+    CreateNewHistoryNode(history, *list, *cursor);
 
     HistoryNode* temp = forRedo -> top;
 
     DestroyList(*list);
 
     *list = temp -> version;
+
+    *cursor = temp -> cursorVersion;
 
     forRedo -> top = forRedo -> top -> next;
 
@@ -923,7 +942,7 @@ void InsertWithReplace(LList* list, Cursor* cursor)
 
     int newLength = symbolIndexInput + insertionLength;
 
-    while (newLength > curr -> capacity)
+    while (newLength >= curr -> capacity)
     {
         IncreaseLineSize(curr);
     }
@@ -1051,7 +1070,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 AppendText(list, &cursor);
 
@@ -1062,7 +1081,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 CreateNewLine(list, &cursor);
 
@@ -1102,7 +1121,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 InsertAt(list, &cursor);
 
@@ -1120,7 +1139,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 DeleteAt(list, &cursor);
                 
@@ -1129,14 +1148,14 @@ int main()
 
             case 9:
             {
-                Undo(&list, history, forRedo);
+                Undo(&list, history, forRedo, &cursor);
 
                 break;
             }
 
             case 10:
             {
-                Redo(&list, forRedo, history);
+                Redo(&list, forRedo, history, &cursor);
 
                 break;
             }
@@ -1145,7 +1164,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 Cut(list, &clipboard, &cursor);
 
@@ -1156,7 +1175,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 Paste(list, &clipboard, &cursor);
 
@@ -1174,7 +1193,7 @@ int main()
             {
                 ClearRedoStack(forRedo);
 
-                CreateNewHistoryNode(history, list);
+                CreateNewHistoryNode(history, list, cursor);
 
                 InsertWithReplace(list, &cursor);
 
