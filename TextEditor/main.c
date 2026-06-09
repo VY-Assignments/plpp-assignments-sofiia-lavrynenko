@@ -35,6 +35,12 @@ typedef struct HistoryStack
     HistoryNode* top;
 } HistoryStack;
 
+typedef struct Cursor
+{
+    int lineIndex;
+    int symbolIndex;
+} Cursor;
+
 LList* CreateList()
 {
     LList* list = (LList*)malloc(sizeof(LList));
@@ -170,7 +176,7 @@ void ClearRedoStack(HistoryStack* forRedo)
     forRedo -> top = NULL;
 }
 
-Node* CreateNewLine(LList* list)
+Node* CreateNewLine(LList* list, Cursor* cursor)
 {
     Node* newNode = (Node*)malloc(sizeof(Node));
 
@@ -211,6 +217,9 @@ Node* CreateNewLine(LList* list)
 
     list -> tail = newNode;
 
+    cursor -> lineIndex ++;
+    cursor -> symbolIndex = 0;
+
     return newNode;
 }
 
@@ -220,13 +229,15 @@ void IncreaseLineSize(Node* line)
     line -> letters = realloc(line -> letters, line -> capacity);
 }
 
-void AppendText(LList* list)
+void AppendText(LList* list, Cursor* cursor)
 {
     Node* currLine = list -> tail;
 
     printf("Please, enter text to append: \n");
 
     int tempChar = 0;
+
+    int symbolsCount = 0;
 
     while (true)
     {
@@ -245,9 +256,13 @@ void AppendText(LList* list)
         currLine -> letters[currLine -> currLength] = tempChar;
 
         currLine -> currLength++;
+
+        symbolsCount++;
     }
 
     currLine -> letters[currLine -> currLength] = '\0';
+
+    cursor -> symbolIndex += symbolsCount;
 }
 
 void SaveToFile(LList* list)
@@ -301,7 +316,7 @@ void SaveToFile(LList* list)
     }
 }
 
-void LoadFromFile(LList* list)
+void LoadFromFile(LList* list, Cursor* cursor)
 {
     char fileName[30];
 
@@ -352,13 +367,13 @@ void LoadFromFile(LList* list)
 
     int tempChar = 0;
 
-    Node* currLine = CreateNewLine(list);
+    Node* currLine = CreateNewLine(list, cursor);
 
     while ((tempChar = fgetc(file)) != EOF)
     {
         if (tempChar == '\n')
         {
-            currLine = CreateNewLine(list);
+            currLine = CreateNewLine(list, cursor);
         }
         else
         {
@@ -392,16 +407,11 @@ void PrintToConsole(LList* list)
     }
 }
 
-void InsertAt(LList* list)
+void InsertAt(LList* list, Cursor* cursor)
 {
     // line and symbol indexes block
 
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -414,19 +424,7 @@ void InsertAt(LList* list)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -489,6 +487,8 @@ void InsertAt(LList* list)
     }
 
     curr -> currLength = newLineLength;
+
+    cursor -> symbolIndex += insertionLength;
 
     free(insertionBuff);
 }
@@ -553,16 +553,11 @@ void SearchByWord(LList* list)
     }
 }
 
-void Cut(LList* list, Clipboard* clipboard)
+void Cut(LList* list, Clipboard* clipboard, Cursor* cursor)
 {
     // line and symbol indexes block
 
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -575,19 +570,7 @@ void Cut(LList* list, Clipboard* clipboard)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -649,7 +632,7 @@ void Cut(LList* list, Clipboard* clipboard)
     printf("Cutted. \n");
 }
 
-void Paste(LList* list, Clipboard* clipboard)
+void Paste(LList* list, Clipboard* clipboard, Cursor* cursor)
 {
     // check if there's something to paste block
 
@@ -662,12 +645,7 @@ void Paste(LList* list, Clipboard* clipboard)
 
     // line and symbol indexes block
 
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -680,19 +658,7 @@ void Paste(LList* list, Clipboard* clipboard)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -722,19 +688,16 @@ void Paste(LList* list, Clipboard* clipboard)
 
     curr -> currLength = newLineLength;
 
+    cursor -> symbolIndex += clipboard -> currLength;
+
     printf("Pasted. \n");
 }
 
-void Copy(LList* list, Clipboard* clipboard)
+void Copy(LList* list, Clipboard* clipboard, Cursor* cursor)
 {
     // line and symbol indexes block
 
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -747,19 +710,7 @@ void Copy(LList* list, Clipboard* clipboard)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -805,16 +756,11 @@ void Copy(LList* list, Clipboard* clipboard)
     printf("Copied. \n");
 }
 
-void DeleteAt(LList* list)
+void DeleteAt(LList* list, Cursor* cursor)
 {
     // line and symbol indexes block
 
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -827,19 +773,7 @@ void DeleteAt(LList* list)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -875,6 +809,8 @@ void DeleteAt(LList* list)
     curr -> currLength = curr -> currLength - symbolsToDelete;
 
     curr -> letters[curr -> currLength] = '\0';
+
+    cursor -> symbolIndex -= symbolsToDelete;
 }
 
 void Undo(LList** list, HistoryStack* history, HistoryStack* forRedo)
@@ -925,16 +861,11 @@ void Redo(LList** list, HistoryStack* forRedo, HistoryStack* history)
     printf("Redo is finished. \n");
 }
 
-void InsertWithReplace(LList* list)
+void InsertWithReplace(LList* list, Cursor* cursor)
 {
     // line and symbol indexes block
     
-    printf("Please, enter line index: \n");
-
-    int lineIndexInput;
-    scanf("%d", &lineIndexInput);
-
-    getchar();
+    int lineIndexInput = cursor -> lineIndex;
 
     Node* curr = list -> head;
 
@@ -947,19 +878,7 @@ void InsertWithReplace(LList* list)
         count++;
     }
 
-    if (curr == NULL)
-    {
-        printf("Line index out of bounds.");
-
-        return;
-    }
-
-    printf("Please, enter symbol index: \n");
-
-    int symbolIndexInput;
-    scanf("%d", &symbolIndexInput);
-
-    getchar();
+    int symbolIndexInput = cursor -> symbolIndex;
 
     if (symbolIndexInput < 0 || symbolIndexInput > curr -> currLength)
     {
@@ -1021,7 +940,55 @@ void InsertWithReplace(LList* list)
 
     curr -> letters[curr -> currLength] = '\0';
 
+    cursor -> symbolIndex += insertionLength;
+
     free(insertionBuff);
+}
+
+void MoveCursor(LList* list, Cursor* cursor)
+{
+    printf("Enter new line index: \n");
+
+    int newLineIndex;
+    scanf("%d", &newLineIndex);
+
+    getchar();
+
+    Node* curr = list -> head;
+
+    int count = 0;
+
+    while (curr != NULL && count < newLineIndex)
+    {
+        curr = curr -> next;
+
+        count++;
+    }
+
+    if (curr == NULL)
+    {
+        printf("Line index out of bounds.");
+
+        return;
+    }
+
+    printf("Enter new symbol index: \n");
+
+    int newSymbolIndex;
+    scanf("%d", &newSymbolIndex);
+
+    getchar();
+
+    if (newSymbolIndex < 0 || newSymbolIndex > curr -> currLength)
+    {
+        printf("Symbol index out of bounds.");
+
+        return;
+    }
+
+    cursor -> lineIndex = newLineIndex;
+
+    cursor -> symbolIndex = newSymbolIndex;
 }
 
 int main()
@@ -1030,7 +997,12 @@ int main()
 
     LList* list = CreateList();
 
-    Node* head = CreateNewLine(list);
+    Cursor cursor;
+
+    cursor.lineIndex = 0;
+    cursor.symbolIndex = 0;
+
+    Node* head = CreateNewLine(list, &cursor);
 
     Clipboard clipboard;
 
@@ -1061,7 +1033,8 @@ int main()
         printf("12 - paste by indexes \n");
         printf("13 - copy by indexes and number of symbols \n");
         printf("14 - insert with replacement \n");
-        printf("15 - exit \n");
+        printf("15 - move cursor by indexes \n");
+        printf("16 - exit \n");
         printf("\n");
         printf("**** \n");
         printf("\n");
@@ -1080,7 +1053,7 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                AppendText(list);
+                AppendText(list, &cursor);
 
                 break;
             }
@@ -1091,7 +1064,7 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                CreateNewLine(list);
+                CreateNewLine(list, &cursor);
 
                 printf("New line is started. \n");
 
@@ -1113,7 +1086,7 @@ int main()
                 DestroyHistoryStack(forRedo);
                 forRedo = CreateHistoryStack();
 
-                LoadFromFile(list);
+                LoadFromFile(list, &cursor);
 
                 break;
             }
@@ -1131,7 +1104,7 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                InsertAt(list);
+                InsertAt(list, &cursor);
 
                 break;
             }
@@ -1149,7 +1122,7 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                DeleteAt(list);
+                DeleteAt(list, &cursor);
                 
                 break;
             }
@@ -1174,7 +1147,7 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                Cut(list, &clipboard);
+                Cut(list, &clipboard, &cursor);
 
                 break;
             }
@@ -1185,14 +1158,14 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                Paste(list, &clipboard);
+                Paste(list, &clipboard, &cursor);
 
                 break;
             }
 
             case 13:
             {
-                Copy(list, &clipboard);
+                Copy(list, &clipboard, &cursor);
 
                 break;
             }
@@ -1203,12 +1176,19 @@ int main()
 
                 CreateNewHistoryNode(history, list);
 
-                InsertWithReplace(list);
+                InsertWithReplace(list, &cursor);
 
                 break;
             }
 
-            case 15: 
+            case 15:
+            {
+                MoveCursor(list, &cursor);
+
+                break;
+            }
+
+            case 16: 
             {
                 printf("Exiting the program. \n");
                 printf("\n");
