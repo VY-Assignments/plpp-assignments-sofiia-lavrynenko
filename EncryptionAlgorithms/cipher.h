@@ -15,7 +15,7 @@ class Cipher
 class CaesarCipher : public Cipher
 {
     private: 
-        int key;
+        int _key;
 
     public:
         CaesarCipher(int key);
@@ -27,7 +27,7 @@ class CaesarCipher : public Cipher
 class VigenereCipher : public Cipher
 {
     private:
-        std::string key;
+        std::string _key;
     
     public: 
         VigenereCipher(std::string key);
