@@ -2,6 +2,10 @@
 #include <iostream>
 #include <string>
 
+static std::string apiBuffEncryp;
+
+static std::string apiBuffDecryp;
+
 CaesarCipher::CaesarCipher(int key)
 {
     _key = key;
@@ -180,4 +184,101 @@ std::string VigenereCipher::decrypt(const std::string &text)
     }
 
     return res;
+}
+
+extern "C"
+{
+    void* create(const char* type, const char* key)
+    {
+        std::string cipherType(type);
+        std::string cipherKey(key);
+
+        if (cipherType == "C")
+        {
+            int intKey = std::stoi(cipherKey);
+
+            return new CaesarCipher(intKey);
+        }
+
+        else if (cipherType == "V")
+        {
+            return new VigenereCipher(cipherKey);
+        }
+
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    const char* cipherEncrypt(void* cipherType, const char* text)
+    {
+        if (cipherType == nullptr)
+        {
+            return "";
+        }
+
+        Cipher* curr = (Cipher*)cipherType;
+
+        apiBuffEncryp = curr -> encrypt(text);
+
+        return apiBuffEncryp.c_str();
+    }
+
+    const char* cipherDecrypt(void* cipherType, const char* text)
+    {
+        if (cipherType == nullptr)
+        {
+            return "";
+        }
+
+        Cipher* curr = (Cipher*)cipherType;
+
+        apiBuffDecryp = curr -> decrypt(text);
+
+        return apiBuffDecryp.c_str();
+    }
+
+    void freeCipher(void* cipherType)
+    {
+        if (cipherType != nullptr)
+        {
+            Cipher* curr = (Cipher*)cipherType;
+
+            delete curr;
+        }
+    }
+}
+
+int main()
+{
+    void* caesar = create("C", "3");
+
+    const char* text = "Hello, world!";
+
+    const char* encr = cipherEncrypt(caesar, text);
+
+    const char* decr = cipherDecrypt(caesar, encr);
+
+    std::cout << "Orig: " << text << std::endl;
+    std::cout << "Encryp: " << encr << std::endl;
+    std::cout << "Decryp: " << decr << std::endl;
+
+    freeCipher(caesar);
+
+
+
+    void* vigenere = create("V", "key");
+
+    const char* encryp = cipherEncrypt(vigenere, text);
+
+    const char* decryp = cipherDecrypt(vigenere, encryp);
+
+    std::cout << "Orig: " << text << std::endl;
+    std::cout << "Encryp: " << encryp << std::endl;
+    std::cout << "Decryp: " << decryp << std::endl;
+
+    freeCipher(vigenere);
+
+    return 0;
 }

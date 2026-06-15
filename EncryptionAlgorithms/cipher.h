@@ -36,4 +36,15 @@ class VigenereCipher : public Cipher
         std::string decrypt(const std::string &text) override;
 };
 
+extern "C" 
+{
+    void* create(const char* type, const char* key);
+
+    const char* cipherEncrypt(void* cipherType, const char* text);
+
+    const char* cipherDecrypt(void* cipherType, const char* text);
+
+    void freeCipher(void* cipherType);
+}
+
 #endif
