@@ -249,36 +249,3 @@ extern "C"
         }
     }
 }
-
-int main()
-{
-    void* caesar = create("C", "3");
-
-    const char* text = "Hello, world!";
-
-    const char* encr = cipherEncrypt(caesar, text);
-
-    const char* decr = cipherDecrypt(caesar, encr);
-
-    std::cout << "Orig: " << text << std::endl;
-    std::cout << "Encryp: " << encr << std::endl;
-    std::cout << "Decryp: " << decr << std::endl;
-
-    freeCipher(caesar);
-
-
-
-    void* vigenere = create("V", "key");
-
-    const char* encryp = cipherEncrypt(vigenere, text);
-
-    const char* decryp = cipherDecrypt(vigenere, encryp);
-
-    std::cout << "Orig: " << text << std::endl;
-    std::cout << "Encryp: " << encryp << std::endl;
-    std::cout << "Decryp: " << decryp << std::endl;
-
-    freeCipher(vigenere);
-
-    return 0;
-}
