@@ -43,7 +43,8 @@ int main()
         std::cout << "Welcome!" << std::endl;
         std::cout << "1 - use caesar cipher" << std::endl;
         std::cout << "2 - use vigenere cipher" << std::endl;
-        std::cout << "3 - exit" << std::endl;
+        std::cout << "3 - use vernam cipher" << std::endl;
+        std::cout << "4 - exit" << std::endl;
 
         std::cout << "Choose your option:" << std::endl;
 
@@ -198,6 +199,72 @@ int main()
                 }
 
             case 3:
+                {
+                    std::cout << "You've chosen vernam cipher!" << std::endl;
+                    std::cout << std::endl;
+
+                    std::cout << "Please, enter your key:" << std::endl;
+                    std::string key;
+                    std::cin >> key;
+                    std::cout << std::endl;
+
+                    std::cout << "1 - encrypt" << std::endl;
+                    std::cout << "2 - decrypt" << std::endl;
+                    std::cout << "Choose your next option:" <<std::endl;
+
+                    int inputVern;
+
+                    std::cin >> inputVern;
+                    std::cout << std::endl;
+
+                    void* vernam = createCipher("Vern", key.c_str());
+
+                    if (vernam)
+                    {
+                        if (inputVern == 1)
+                        {
+                            std::cout << "Please, enter your text:" << std::endl;
+                            std::string origText;
+                            
+                            std::cin.ignore();
+                            std::getline(std::cin, origText);
+                            std::cout << std::endl;
+
+                            encryp = encryptCipher(vernam, origText.c_str());
+
+                            std::cout << "Encrypted: " << encryp << std::endl;
+                            std::cout << std::endl;
+                        }
+                        
+                        else if (inputVern == 2)
+                        {
+                            if (encryp == nullptr || encryp[0] == '\0')
+                            {
+                                std::cout << "You need to encrypt something first." << std::endl;
+                                std::cout << std::endl;
+                            }
+
+                            else
+                            {
+                                const char* decryp = decryptCipher(vernam, encryp);
+
+                                std::cout << "Decrypted: " << decryp << std::endl;
+                                std::cout << std::endl;
+                            }
+                        }
+
+                        else
+                        {
+                            std::cout << "Invalid input." << std::endl;
+                        }
+
+                        freeCipher(vernam);
+                    }
+
+                    break;
+                }
+
+            case 4:
                 {
                     std::cout << "Exiting the program." << std::endl;
                 

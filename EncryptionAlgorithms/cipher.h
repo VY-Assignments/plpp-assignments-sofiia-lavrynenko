@@ -36,6 +36,18 @@ class VigenereCipher : public Cipher
         std::string decrypt(const std::string &text) override;
 };
 
+class VernamCipher : public Cipher
+{
+    private: 
+        std::string _key;
+
+    public:
+        VernamCipher(std::string key);
+
+        std::string encrypt(const std::string &text) override;
+        std::string decrypt(const std::string &text) override;
+};
+
 extern "C" 
 {
     void* create(const char* type, const char* key);

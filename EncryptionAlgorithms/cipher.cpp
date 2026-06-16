@@ -1,6 +1,7 @@
 #include "cipher.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 
 static std::string apiBuffEncryp;
 
@@ -186,6 +187,83 @@ std::string VigenereCipher::decrypt(const std::string &text)
     return res;
 }
 
+VernamCipher::VernamCipher(std::string key)
+{
+    _key = key;
+}
+
+std::string VernamCipher::encrypt(const std::string &text)
+{
+    int keyLength = _key.length();
+
+    int textLength = text.length();
+
+    if (keyLength < textLength)
+    {
+        std::cout << "Key must be the same or longer than text to encrypt." << std::endl;
+
+        return "";
+    }
+
+    std::string res;
+
+    for (int i = 0; i < textLength; i++)
+    {
+        int xorRes = text[i] ^ _key[i];
+
+        res += std::to_string(xorRes);
+
+        if (i < textLength - 1)
+        {
+            res += " ";
+        }
+    }
+
+    return res;
+}
+
+std::string VernamCipher::decrypt(const std::string &text)
+{
+    std::string res = "";
+
+    int xorRes;
+
+    int i = 0;
+
+    int j = 0;
+
+    while (i < text.length())
+    {
+        int nextSp = text.find(' ', i);
+
+        std::string number = text.substr(i, nextSp - i);
+
+        xorRes = std::stoi(number);
+
+        if (j >= _key.length())
+        {
+            std::cout << "Key must be the same or longer than text to encrypt." << std::endl;
+
+            return "";
+        }
+
+        char origCh = xorRes ^ _key[j];
+
+        res += origCh;
+
+        j++;
+
+        if (nextSp == std::string::npos)
+        {
+            break;
+        }
+
+        i = nextSp + 1;
+    }
+
+    return res;
+}
+
 extern "C"
 {
     void* create(const char* type, const char* key)
@@ -203,6 +281,11 @@ extern "C"
         else if (cipherType == "V")
         {
             return new VigenereCipher(cipherKey);
+        }
+
+        else if (cipherType == "Vern")
+        {
+            return new VernamCipher(cipherKey);
         }
 
         else
