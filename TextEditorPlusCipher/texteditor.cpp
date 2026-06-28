@@ -1,5 +1,6 @@
 #include "texteditor.h"
 #include "line.h"
+#include "history.h"
 
 #include <iostream>
 #include <string>
@@ -283,4 +284,14 @@ void TextEditor::SearchByWord(std::string searchWord)
     {
         std::cout << "Nothing found. \n";
     }
+}
+
+void TextEditor::Undo()
+{
+    _history.Undo(_allLines, _cursor.lineInd, _cursor.symbolInd);
+}
+
+void TextEditor::Redo()
+{
+    _history.Redo(_allLines, _cursor.lineInd, _cursor.symbolInd);
 }

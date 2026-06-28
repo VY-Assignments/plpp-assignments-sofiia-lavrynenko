@@ -4,6 +4,7 @@
 #include "line.h"
 #include <string>
 #include <vector>
+#include "history.h"
 
 struct Cursor
 {
@@ -17,6 +18,7 @@ class TextEditor
         std::vector<Line*> _allLines;
         std::string _clipboard;
         Cursor _cursor;
+        History _history;
 
     public:
         TextEditor() = default;
@@ -38,6 +40,9 @@ class TextEditor
         void Paste();
         void Cut(int symbolsToCut);
         void SearchByWord(std::string searchWord);
+
+        void Undo();
+        void Redo();
 
         ~TextEditor();
 };

@@ -14,6 +14,7 @@ class Line
         virtual void deleteAt(int index, int symbolsToDelete) = 0;
         virtual void copy(int index, int symbolsToCopy, std::string& clipboard) = 0;
         virtual std::vector<int> search(std::string search) = 0;
+        virtual Line* clone() const = 0;
 
         virtual ~Line() = default;
 };
@@ -34,6 +35,7 @@ class TextLine : public Line
         void deleteAt(int index, int symbolsToDelete) override;
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
+        Line* clone() const override;
 };  
 
 class CheckLine : public Line
@@ -53,6 +55,7 @@ class CheckLine : public Line
         void deleteAt(int index, int symbolsToDelete) override;
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
+        Line* clone() const override;
 };
 
 class ContactLine : public Line
@@ -72,6 +75,7 @@ class ContactLine : public Line
         void deleteAt(int index, int symbolsToDelete) override;
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
+        Line* clone() const override;
 };
 
 #endif

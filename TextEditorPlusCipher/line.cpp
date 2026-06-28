@@ -105,6 +105,11 @@ std::vector<int> TextLine::search(std::string search)
     return results;
 }
 
+Line* TextLine::clone() const
+{
+    return new TextLine(*this);
+}
+
 CheckLine::CheckLine(const std::string& text, bool isChecked)
 {
     _text = text;
@@ -247,6 +252,11 @@ std::vector<int> CheckLine::search(std::string search)
     }
 
     return results;
+}
+
+Line* CheckLine::clone() const
+{
+    return new CheckLine(*this);
 }
 
 ContactLine::ContactLine(const std::string& name, const std::string& email)
@@ -487,4 +497,9 @@ std::vector<int> ContactLine::search(std::string search)
     }
     
     return results;
+}
+
+Line* ContactLine::clone() const
+{
+    return new ContactLine(*this);
 }
