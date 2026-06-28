@@ -1,7 +1,6 @@
 #ifndef LINE_H
 #define LINE_H
 
-
 #include <string>
 
 class Line
@@ -9,6 +8,12 @@ class Line
     public:
         virtual void print() const = 0;
         virtual std::string serialize() const = 0;
+        virtual int getLength() = 0;
+        virtual void insert(int index, std::string toInsert) = 0;
+        virtual void insertWithReplace(int index, std::string toInsert) = 0;
+        virtual void deleteAt(int index, int symbolsToDelete) = 0;
+        virtual void copy(int index, int symbolsToCopy, std::string& clipboard) = 0;
+        virtual std::vector<int> search(std::string search) = 0;
 
         virtual ~Line() = default;
 };
@@ -23,7 +28,13 @@ class TextLine : public Line
 
         void print() const override;
         std::string serialize() const override;
-};
+        int getLength() override;
+        void insert(int index, std::string toInsert) override;
+        void insertWithReplace(int index, std::string toInsert) override;
+        void deleteAt(int index, int symbolsToDelete) override;
+        void copy(int index, int symbolsToCopy, std::string& clipboard) override;
+        std::vector<int> search(std::string search) override;
+};  
 
 class CheckLine : public Line
 {
@@ -36,6 +47,12 @@ class CheckLine : public Line
 
         void print() const override;
         std::string serialize() const override;
+        int getLength() override;
+        void insert(int index, std::string toInsert) override;
+        void insertWithReplace(int index, std::string toInsert) override;
+        void deleteAt(int index, int symbolsToDelete) override;
+        void copy(int index, int symbolsToCopy, std::string& clipboard) override;
+        std::vector<int> search(std::string search) override;
 };
 
 class ContactLine : public Line
@@ -49,6 +66,12 @@ class ContactLine : public Line
 
         void print() const override;
         std::string serialize() const override;
+        int getLength() override;
+        void insert(int index, std::string toInsert) override;
+        void insertWithReplace(int index, std::string toInsert) override;
+        void deleteAt(int index, int symbolsToDelete) override;
+        void copy(int index, int symbolsToCopy, std::string& clipboard) override;
+        std::vector<int> search(std::string search) override;
 };
 
 #endif
