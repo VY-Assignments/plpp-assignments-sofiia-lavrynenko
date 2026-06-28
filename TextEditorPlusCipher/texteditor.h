@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "history.h"
+#include "cipher_manager.h"
 
 struct Cursor
 {
@@ -17,8 +18,11 @@ class TextEditor
     private:
         std::vector<Line*> _allLines;
         std::string _clipboard;
+        std::string _encrypted;
+        std::string _decrypted;
         Cursor _cursor;
         History _history;
+        CipherManager cipherManager;
 
     public:
         TextEditor() = default;
@@ -43,6 +47,12 @@ class TextEditor
 
         void Undo();
         void Redo();
+
+        void EncryptAllText(const std::string& cipherType, const std::string& key);
+        void DecryptAllText(const std::string& cipherType, const std::string& key);
+
+        void SaveEncrypted(const std::string& filename, const std::string& cipherType, const std::string& key);
+        void LoadEncrypted(const std::string& filename, const std::string& cipherType, const std::string& key);
 
         ~TextEditor();
 };

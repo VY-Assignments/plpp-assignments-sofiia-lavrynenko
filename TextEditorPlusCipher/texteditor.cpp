@@ -1,13 +1,17 @@
 #include "texteditor.h"
 #include "line.h"
 #include "history.h"
+#include "cipher_manager.h"
 
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 void TextEditor::AddTextLine(const std::string& text)
 {
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
+
     _allLines.push_back(new TextLine(text));
     
     _cursor.lineInd = static_cast<int>(_allLines.size()) - 1;
@@ -16,6 +20,8 @@ void TextEditor::AddTextLine(const std::string& text)
 
 void TextEditor::AddCheckLine(const std::string& text, bool isChecked)
 {
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
+
     _allLines.push_back(new CheckLine(text, isChecked));
 
     _cursor.lineInd = static_cast<int>(_allLines.size()) - 1;
@@ -24,6 +30,8 @@ void TextEditor::AddCheckLine(const std::string& text, bool isChecked)
 
 void TextEditor::AddContactLine(const std::string& name, const std::string& email)
 {
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
+
     _allLines.push_back(new ContactLine(name, email));
 
     _cursor.lineInd = static_cast<int>(_allLines.size()) - 1;
@@ -71,38 +79,10 @@ void TextEditor::LoadFromFile(const std::string& filename)
 
     while (std::getline(file, newLine))
     {
-        Line* line;
-
-        if (newLine[0] == 'T')
+        Line* line = Line::deserialize(newLine);
+        if (line != nullptr)
         {
-            AddTextLine(newLine.erase(0, 4));
-        }
-        else if (newLine[0] == 'C')
-        {
-            bool check;
-
-            if (newLine[4] == '1')
-            {
-                check = true;
-            }
-            else
-            {
-                check = false;
-            }
-
-            AddCheckLine(newLine.erase(0, 8), check);
-        }
-        else
-        {
-            newLine = newLine.erase(0, 4);
-
-            size_t position = newLine.find('|');
-
-            std::string name = newLine.substr(0, position);
-
-            std::string email = newLine.erase(0, name.length() + 3);
-
-            AddContactLine(name, email);
+            _allLines.push_back(line);
         }
     }
 
@@ -123,16 +103,6 @@ void TextEditor::PrintToConsole() const
     {
         _allLines[i] -> print();
     }
-}
-
-TextEditor::~TextEditor()
-{
-    for (Line* line : _allLines)
-    {
-        delete line;
-    }
-
-    _allLines.clear();
 }
 
 void TextEditor::MoveCursor(int newLineInd, int newSymbolInd)
@@ -176,6 +146,8 @@ void TextEditor::InsertAt(std::string toInsert)
         return;
     }
 
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
+
     _allLines[_cursor.lineInd] -> insert(_cursor.symbolInd, toInsert);
 
     _cursor.symbolInd += toInsert.length();
@@ -188,6 +160,8 @@ void TextEditor::InsertWithReplace(std::string toInsert)
         std::cout << "Nothing to insert into. \n";
         return;
     }
+
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
 
     _allLines[_cursor.lineInd] -> insertWithReplace(_cursor.symbolInd, toInsert);
 
@@ -205,6 +179,8 @@ void TextEditor::DeleteAt(int symbolsToDelete)
         std::cout << "Nothing to delete from. \n";
         return;
     }
+
+    _history.SaveNode(_allLines, _cursor.lineInd, _cursor.symbolInd);
 
     _allLines[_cursor.lineInd] -> deleteAt(_cursor.symbolInd, symbolsToDelete);
 }
@@ -294,4 +270,115 @@ void TextEditor::Undo()
 void TextEditor::Redo()
 {
     _history.Redo(_allLines, _cursor.lineInd, _cursor.symbolInd);
+}
+
+void TextEditor::EncryptAllText(const std::string& cipherType, const std::string& key)
+{
+    if (_allLines.empty())
+    {
+        std::cout << "Nothing to encrypt. \n";
+        return;
+    }
+
+    std::string text = "";
+
+    for (Line* line : _allLines)
+    {
+        if (line != nullptr)
+        {
+            text += line -> serialize() + "\n";
+        }
+    }
+
+    _encrypted = cipherManager.Encrypt(text, cipherType, key);
+}
+
+void TextEditor::DecryptAllText(const std::string& cipherType, const std::string& key)
+{
+    if (_encrypted.empty())
+    {
+        std::cout << "Nothing to decrypt. You need to encrypt first. \n";
+        return;
+    }
+
+    _decrypted = cipherManager.Decrypt(_encrypted, cipherType, key);
+}
+
+void TextEditor::SaveEncrypted(const std::string& filename, const std::string& cipherType, const std::string& key)
+{
+    EncryptAllText(cipherType, key);
+
+    std::ofstream file(filename);
+
+    if(!file.is_open())
+    {
+        std::cout << "Cannot open the file. \n";
+        return;
+    }
+
+    file << _encrypted;
+
+    file.close();
+
+    std::cout << "Encrypted and saved to file. \n";
+}
+
+void TextEditor::LoadEncrypted(const std::string& filename, const std::string& cipherType, const std::string& key)
+{
+    std::ifstream file(filename);
+
+    if (!file.is_open())
+    {
+        std::cout << "Cannot open the file. \n";
+        return;
+    }
+
+    for (Line* line : _allLines)
+    {
+        delete line;
+    }
+    _allLines.clear();
+
+    std::stringstream bufferToDecrypt;
+    bufferToDecrypt << file.rdbuf();
+    _encrypted = bufferToDecrypt.str();
+    file.close();
+
+    _decrypted = "";
+
+    DecryptAllText(cipherType, key);
+
+    if (_decrypted == "" && !_encrypted.empty())
+    {
+        std::cout << "Decryption failed. \n";
+        return;
+    }
+
+    std::stringstream text(_decrypted);
+    std::string row;
+
+    while (std::getline(text, row))
+    {
+        if (row.empty())
+        {
+            continue;
+        }
+
+        Line* line = Line::deserialize(row);
+
+        if (line != nullptr)
+        {
+            _allLines.push_back(line);
+        }
+    }
+}
+
+TextEditor::~TextEditor()
+{
+    for (Line* line : _allLines)
+    {
+        delete line;
+    }
+
+    _allLines.clear();
 }

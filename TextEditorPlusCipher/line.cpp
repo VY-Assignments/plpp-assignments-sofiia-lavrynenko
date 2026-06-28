@@ -2,6 +2,72 @@
 #include <iostream>
 #include <string>
 
+Line* Line::deserialize(const std::string& serialized)
+{
+    if (serialized.empty())
+    {
+        return nullptr;
+    }
+
+    int firstSeparator = serialized.find(" | ");
+
+    if (firstSeparator == std::string::npos) 
+    {
+        return nullptr;
+    }
+
+    std::string data = serialized.substr(firstSeparator + 3);
+
+    if (serialized[0] == 'T')
+    {
+        return new TextLine(data);
+    }
+    else if (serialized[0] == 'C')
+    {
+        int secondSeparator = data.find(" | ");
+        
+        if (secondSeparator == std::string::npos)
+        {
+            return nullptr;
+        }
+
+        std::string statusStr = data.substr(0, secondSeparator);
+        std::string text = data.substr(secondSeparator + 3);
+
+        bool check;
+
+        if (statusStr == "1")
+        {
+            check = true;
+        }
+        else
+        {
+            check = false;
+        }
+
+        return new CheckLine(text, check);
+    }
+    else if (serialized[0] == 'I')
+    {
+        int secondSeparator = data.find(" | ");
+        
+        if (secondSeparator == std::string::npos)
+        {
+            return nullptr;
+        }
+
+        std::string name = data.substr(0, secondSeparator);
+
+        std::string email = data.substr(secondSeparator + 3);
+
+        return new ContactLine(name, email);
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 TextLine::TextLine(const std::string& text)
 {
     _text = text;

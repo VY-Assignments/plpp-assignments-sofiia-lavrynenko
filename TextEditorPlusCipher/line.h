@@ -16,6 +16,8 @@ class Line
         virtual std::vector<int> search(std::string search) = 0;
         virtual Line* clone() const = 0;
 
+        static Line* deserialize(const std::string& serialized);
+
         virtual ~Line() = default;
 };
 
