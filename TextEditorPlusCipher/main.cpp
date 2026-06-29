@@ -80,7 +80,16 @@ int main()
 
                                 std::cout << "\n";
 
-                                textEditor.AddTextLine(text);
+                                if (text.empty())
+                                {
+                                    std::cout << "You need to type the text. \n";
+
+                                    break;
+                                }
+                                else
+                                {
+                                    textEditor.AddTextLine(text);
+                                }
 
                                 break;
                             }
@@ -93,6 +102,13 @@ int main()
                                 std::getline (std::cin, text);
 
                                 std::cout << "\n";
+
+                                if (text.empty())
+                                {
+                                    std::cout << "You need to type the text. \n";
+
+                                    break;
+                                }
 
                                 int checkInput;
 
@@ -134,6 +150,13 @@ int main()
 
                                 std::cout << "\n";
 
+                                if (name.empty())
+                                {
+                                    std::cout << "You need to type the name. \n";
+
+                                    break;
+                                }
+
                                 std::cout << "Please, enter the email: ";
 
                                 std::string email;
@@ -141,7 +164,16 @@ int main()
 
                                 std::cout << "\n";
 
-                                textEditor.AddContactLine(name, email);
+                                if (email.empty())
+                                {
+                                    std::cout << "You need to type the email. \n";
+
+                                    break;
+                                }
+                                else
+                                {
+                                    textEditor.AddContactLine(name, email);
+                                }
 
                                 break;
                             }
