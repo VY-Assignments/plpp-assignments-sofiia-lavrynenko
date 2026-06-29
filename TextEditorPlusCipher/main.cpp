@@ -30,7 +30,8 @@ int main()
         std::cout << "16 - decrypt the text \n";
         std::cout << "17 - save to file encrypted \n";
         std::cout << "18 - load from file decrypted \n";
-        std::cout << "19 - exit \n";
+        std::cout << "19 - change checkbox status \n";
+        std::cout << "20 - exit \n";
         std::cout << "\n";
         std::cout << "Choose your option: ";
 
@@ -72,7 +73,7 @@ int main()
                     {
                         case 1:
                             {
-                                std::cout << "Please, enter the text:";
+                                std::cout << "Please, enter the text: ";
 
                                 std::string text;
                                 std::getline (std::cin, text);
@@ -86,7 +87,7 @@ int main()
                         
                         case 2:
                             {
-                                std::cout << "Please, enter the text:";
+                                std::cout << "Please, enter the text: ";
 
                                 std::string text;
                                 std::getline (std::cin, text);
@@ -230,7 +231,7 @@ int main()
             
             case 6:
                 {
-                    std::cout << "Please, enter the text to insert:";
+                    std::cout << "Please, enter the text to insert: ";
 
                     std::string text;
                     std::getline (std::cin, text);
@@ -244,7 +245,7 @@ int main()
 
             case 7:
                 {
-                    std::cout << "Please, enter the text to insert with replacement:";
+                    std::cout << "Please, enter the text to insert with replacement: ";
 
                     std::string text;
                     std::getline (std::cin, text);
@@ -313,7 +314,7 @@ int main()
             
             case 12:
                 {
-                    std::cout << "Please, enter the word to search by:";
+                    std::cout << "Please, enter the word to search by: ";
 
                     std::string word;
                     std::getline (std::cin, word);
@@ -599,8 +600,15 @@ int main()
 
                     break;
                 }
-            
+
             case 19:
+                {
+                    textEditor.ChangeStatus();
+
+                    break;
+                }
+            
+            case 20:
                 {
                     std::cout << "Exiting the program. \n";
 

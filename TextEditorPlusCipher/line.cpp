@@ -176,6 +176,11 @@ Line* TextLine::clone() const
     return new TextLine(*this);
 }
 
+void TextLine::changeStatus()
+{
+    return;
+}
+
 CheckLine::CheckLine(const std::string& text, bool isChecked)
 {
     _text = text;
@@ -323,6 +328,11 @@ std::vector<int> CheckLine::search(std::string search)
 Line* CheckLine::clone() const
 {
     return new CheckLine(*this);
+}
+
+void CheckLine::changeStatus() 
+{
+    _isChecked = !_isChecked;
 }
 
 ContactLine::ContactLine(const std::string& name, const std::string& email)
@@ -568,4 +578,9 @@ std::vector<int> ContactLine::search(std::string search)
 Line* ContactLine::clone() const
 {
     return new ContactLine(*this);
+}
+
+void ContactLine::changeStatus()
+{
+    return;
 }

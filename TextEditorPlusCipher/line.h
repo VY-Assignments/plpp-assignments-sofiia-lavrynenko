@@ -15,6 +15,7 @@ class Line
         virtual void copy(int index, int symbolsToCopy, std::string& clipboard) = 0;
         virtual std::vector<int> search(std::string search) = 0;
         virtual Line* clone() const = 0;
+        virtual void changeStatus() = 0;
 
         static Line* deserialize(const std::string& serialized);
 
@@ -38,7 +39,8 @@ class TextLine : public Line
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
         Line* clone() const override;
-};  
+        void changeStatus() override;
+}; 
 
 class CheckLine : public Line
 {
@@ -58,6 +60,7 @@ class CheckLine : public Line
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
         Line* clone() const override;
+        void changeStatus() override;
 };
 
 class ContactLine : public Line
@@ -78,6 +81,7 @@ class ContactLine : public Line
         void copy(int index, int symbolsToCopy, std::string& clipboard) override;
         std::vector<int> search(std::string search) override;
         Line* clone() const override;
+        void changeStatus() override;
 };
 
 #endif

@@ -31,6 +31,8 @@ class TextEditor
         void AddCheckLine(const std::string& text, bool isChecked);
         void AddContactLine(const std::string& name, const std::string& email);
 
+        void ChangeStatus();
+
         void SaveToFile(const std::string& filename) const;
         void LoadFromFile(const std::string& filename);
 

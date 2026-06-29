@@ -375,6 +375,17 @@ void TextEditor::LoadEncrypted(const std::string& filename, const std::string& c
     }
 }
 
+void TextEditor::ChangeStatus()
+{
+    if (_allLines.empty())
+    {
+        std::cout << "No text, cannot change status. \n";
+        return;
+    }
+
+    _allLines[_cursor.lineInd] -> changeStatus();
+}
+
 TextEditor::~TextEditor()
 {
     for (Line* line : _allLines)
