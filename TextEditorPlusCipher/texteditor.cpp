@@ -103,6 +103,8 @@ void TextEditor::PrintToConsole() const
     {
         _allLines[i] -> print();
     }
+
+    std::cout << "\n";
 }
 
 void TextEditor::MoveCursor(int newLineInd, int newSymbolInd)

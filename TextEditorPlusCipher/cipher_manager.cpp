@@ -2,7 +2,7 @@
 #include <dlfcn.h>
 #include <iostream>
 
-CipherManager::CipherManager(const std::string& libPath) : _libPath(libPath) {}
+CipherManager::CipherManager() {}
 
 std::string CipherManager::ProcessText(const std::string& text, const std::string& type, const std::string& key, bool isEncrypt)
 {

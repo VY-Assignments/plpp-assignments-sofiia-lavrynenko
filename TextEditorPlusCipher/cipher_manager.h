@@ -16,7 +16,7 @@ class CipherManager
         std::string ProcessText(const std::string& text, const std::string& type, const std::string& key, bool isEncrypt);
 
         public:
-            CipherManager(const std::string& libPath = "./libcipher.dylib");
+            CipherManager();
 
             std::string Encrypt(const std::string& text, const std::string& type, const std::string& key);
             std::string Decrypt(const std::string& text, const std::string& type, const std::string& key);
